@@ -5,12 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Police Khidmat Markaz - Document Verification</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: url('https://pkm.islamabadpolice.gov.pk/assets/images/bg.jpg') no-repeat center center fixed !important;
+            background-size: cover !important;
+        }
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e0e0e0;
+            border-top: 5px solid #2c3e6e;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
             <div class="header-content">
-                <img src="https://pkm.islamabadpolice.gov.pk/assets/images/logo.png" alt="Police Logo" class="logo">
+                <img src="logo.png" alt="Police Logo" class="logo">
                
             </div>
         </header>
@@ -19,7 +38,7 @@
             <div class="content-box">
                 <h2 class="title">Document Verification</h2>
                 
-                <div class="verification-form">
+                <div class="verification-form" id="formSection">
                     <div class="form-group">
                         <label for="passport_number">Passport Number (required)</label>
                         <input type="text" id="passport_number" name="passport_number" class="form-control" placeholder="Enter Pasport Number" required="">
@@ -60,41 +79,23 @@
         </footer>
     </div>
 
-    <style>
-        .loader {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #e0e0e0;
-            border-top: 5px solid #2c3e6e;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
-
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_n97blK2HgZedxm2zA8au0F9ydt7Uy3twtXix0zCtzz0t6i4w4Cnza8o0UahA-GnV/exec";
 
         function formatDate(raw) {
             var d = new Date(raw);
-            if (isNaN(d)) return raw; // agar already formatted ho toh as-is return
+            if (isNaN(d)) return raw;
             var day = String(d.getUTCDate()).padStart(2, '0');
             var month = String(d.getUTCMonth() + 1).padStart(2, '0');
             var year = d.getUTCFullYear();
             return day + '/' + month + '/' + year;
         }
 
-        var formSection = document.querySelector('.verification-form');
-
         function verifyPassport() {
             var passport = document.getElementById('passport_number').value.trim();
             if (!passport) { alert('Please enter passport number'); return; }
 
-            formSection.style.display = 'none';
+            document.getElementById('formSection').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'block';
             document.getElementById('resultSection').style.display = 'none';
             document.getElementById('errorSection').style.display = 'none';
@@ -127,7 +128,7 @@
 
         function goBack() {
             document.getElementById('passport_number').value = '';
-            formSection.style.display = 'block';
+            document.getElementById('formSection').style.display = 'block';
             document.getElementById('resultSection').style.display = 'none';
             document.getElementById('errorSection').style.display = 'none';
         }
@@ -135,6 +136,15 @@
         document.getElementById('passport_number').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') verifyPassport();
         });
+
+        window.onload = function() {
+            var params = new URLSearchParams(window.location.search);
+            var p = params.get('p');
+            if (p) {
+                document.getElementById('passport_number').value = p;
+                verifyPassport();
+            }
+        };
     </script>
 
 </body></html>
