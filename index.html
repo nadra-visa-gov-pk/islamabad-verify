@@ -40,7 +40,8 @@
                 <div class="verification-form" id="formSection">
                     <div class="form-group">
                         <label for="passport_number">Passport Number (required)</label>
-                        <input type="text" id="passport_number" name="passport_number" class="form-control" placeholder="Enter Passport Number" required="">
+                        <input type="text" id="passport_number" name="passport_number" class="form-control" placeholder="Enter Passport Number">
+                        <span id="passportError" style="display:none; color:#e6b800; font-size:13px; margin-top:5px;">Please enter your passport number.</span>
                     </div>
                     <button type="button" onclick="verifyPassport()" class="submit-btn">SUBMIT</button>
                 </div>
@@ -91,7 +92,11 @@
 
         function verifyPassport() {
             var passport = document.getElementById('passport_number').value.trim();
-            if (!passport) { alert('Please enter passport number'); return; }
+            if (!passport) {
+                document.getElementById('passportError').style.display = 'block';
+                return;
+            }
+            document.getElementById('passportError').style.display = 'none';
 
             document.getElementById('formSection').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'block';
